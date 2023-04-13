@@ -21,7 +21,7 @@ jobs:
       - checkout
       - run: echo "this is the test job"
       - run: export NODE_OPTIONS=--openssl-legacy-providerexport NODE_OPTIONS=--openssl-legacy-provider #環境変数設定#Webpackerエラー対策
-      - run: rails webpacker:compile
+      #- run: rails webpacker:compile
       - run: gem install bundler
       - run: bundle install
       - run: rails db:migrate
