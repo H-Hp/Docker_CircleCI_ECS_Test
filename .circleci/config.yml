@@ -3,6 +3,10 @@ version: 2.1
 # このプロジェクトで実行するジョブの定義
 jobs:
   build:
+   steps:
+      - run: echo "this is the build job"
+      - run: echo $DOCKERHUB_PASSWORD
+      - run: echo DOCKERHUB_PASSWORD
     docker:
       - image: aim-mini-test:latest
         auth:
@@ -14,7 +18,7 @@ jobs:
       - run: echo $DOCKERHUB_PASSWORD
   test:
     docker:
-      - image: circleci/<language>:<version TAG>
+      - image: aim-mini-test:latest
         auth:
           username: dockermy7777
           password: $DOCKERHUB_PASSWORD  # コンテキスト/プロジェクト UI 環境変数の参照
