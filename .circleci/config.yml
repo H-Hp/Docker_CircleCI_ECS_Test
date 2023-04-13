@@ -28,6 +28,7 @@ jobs:
       - run: bundle install
       - run: rails db:migrate
       - run: rails test
+      
 
 # ジョブの実行順の指定
 workflows:
