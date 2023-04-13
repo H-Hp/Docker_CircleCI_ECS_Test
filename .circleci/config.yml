@@ -11,7 +11,6 @@ jobs:
     steps:
       - checkout
       - run: echo "this is the build job"
-      - run: echo $DOCKERHUB_PASSWORD
   test:
     docker:
       - image: dockermy7777/aim-mini-test:latest
@@ -21,6 +20,10 @@ jobs:
     steps:
       - checkout
       - run: echo "this is the test job"
+      - run: gem install bundler
+      - run: bundle install
+      - run: rails db:migrate
+      - run: rails test
 
 # ジョブの実行順の指定
 workflows:
