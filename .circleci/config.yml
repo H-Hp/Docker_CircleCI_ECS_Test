@@ -20,6 +20,7 @@ jobs:
     steps:
       - checkout
       - run: echo "this is the test job"
+      - run: apt-get install yarn
       - run: export NODE_OPTIONS=--openssl-legacy-providerexport NODE_OPTIONS=--openssl-legacy-provider #環境変数設定#Webpackerエラー対策
       - run: rails webpacker:install
       - run: rails webpacker:compile
