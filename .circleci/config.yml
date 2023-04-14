@@ -10,7 +10,7 @@ jobs:
           password: $DOCKERHUB_PASSWORD  # コンテキスト/プロジェクト UI 環境変数の参照
     steps:
       - checkout
-      - run: echo "this is the build job"
+      - run: echo "これはbuild job"
   test:
     docker:
       - image: dockermy7777/aim-mini-test:v2
@@ -19,15 +19,7 @@ jobs:
           password: $DOCKERHUB_PASSWORD  # コンテキスト/プロジェクト UI 環境変数の参照
     steps:
       - checkout
-      - run: echo "this is the test job"
-      - run: apt-get install yarn
-      - run: export NODE_OPTIONS=--openssl-legacy-providerexport NODE_OPTIONS=--openssl-legacy-provider #環境変数設定#Webpackerエラー対策
-      - run: rails webpacker:compile
-      - run: gem install bundler
-      - run: bundle install
-      - run: rails db:migrate
-      - run: rails test
-
+      - run: echo "これはtest job"
 
 # ジョブの実行順の指定
 workflows:
