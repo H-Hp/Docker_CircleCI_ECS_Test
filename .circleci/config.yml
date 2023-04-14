@@ -21,8 +21,13 @@ jobs:
       - checkout
       - run: echo "これはtest job"
   deploy_to_render:
-    machine:
-      image: circleci/classic:latest
+    #machine:
+      #image: circleci/classic:latest
+    docker:
+      - image: dockermy7777/aim-mini-test:v2
+        auth:
+          username: dockermy7777
+          password: $DOCKERHUB_PASSWORD  # コンテキスト/プロジェクト UI 環境変数の参照
     steps:
       - checkout
       - run:
