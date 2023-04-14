@@ -33,10 +33,14 @@ jobs:
       - run:
           name: Deploy to Render.com
           command: |
-            curl -X POST "https://render.com/api/v1/projects/$RENDER_ACCOUNT_ID/$RENDER_PROJECT_ID/deploy/$RENDER_BRANCH" \
-            -H "Authorization: Bearer $RENDER_API_KEY" \
-            -H "Content-Type: application/json" \
-            --data '{"branch":"'"$CIRCLE_BRANCH"'", "commit_sha":"'"$CIRCLE_SHA1"'"}'
+            curl -X POST "https://api.render.com/deploy/srv-$RENDER_PROJECT_ID?key=$RENDER_API_KEY&ref=HEAD"
+            
+            #https://api.render.com/deploy/srv-XXYYZZ?key=AABBCC&ref=baaa339926cb474b61c1f0e6297b024eaa09ac7d
+
+            #curl -X POST "https://render.com/api/v1/projects/$RENDER_ACCOUNT_ID/$RENDER_PROJECT_ID/deploy/$RENDER_BRANCH" \
+            #-H "Authorization: Bearer $RENDER_API_KEY" \
+            #-H "Content-Type: application/json" \
+            #--data '{"branch":"'"$CIRCLE_BRANCH"'", "commit_sha":"'"$CIRCLE_SHA1"'"}'
     #when: on_success
 
 # ジョブの実行順の指定
