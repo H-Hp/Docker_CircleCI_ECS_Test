@@ -33,7 +33,8 @@ jobs:
       - run:
           name: Deploy to Render.com
           command: |
-            curl -X POST "https://api.render.com/deploy/srv-$RENDER_PROJECT_ID?key=$RENDER_API_KEY&ref=HEAD"
+            curl -X GET "https://api.render.com/deploy/srv-$RENDER_PROJECT_ID?key=$RENDER_API_KEY&ref=HEAD"
+            #curl -X POST "https://api.render.com/deploy/srv-$RENDER_PROJECT_ID?key=$RENDER_API_KEY&ref=HEAD"
             
             #https://api.render.com/deploy/srv-XXYYZZ?key=AABBCC&ref=baaa339926cb474b61c1f0e6297b024eaa09ac7d
 
