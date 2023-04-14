@@ -20,6 +20,19 @@ jobs:
     steps:
       - checkout
       - run: echo "これはtest job"
+  deploy_to_render:
+    docker:
+      - image: dockermy7777/aim-mini-test:v3
+        auth:
+          username: dockermy7777
+          password: $DOCKERHUB_PASSWORD  # コンテキスト/プロジェクト UI 環境変数の参照
+    steps:
+      - checkout
+      - run:
+          name: Deploy to Render.com
+          command: |
+            curl -X POST "https://api.render.com/deploy/srv-$RENDER_PROJECT_ID?key=K2f29r9x2sU" 
+    #when: on_success
 
 # ジョブの実行順の指定
 workflows:
@@ -27,3 +40,7 @@ workflows:
     jobs:
       - build
       - test
+  deploy:
+    jobs:
+      - deploy_to_render:
+          context: render
