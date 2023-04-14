@@ -20,6 +20,19 @@ jobs:
     steps:
       - checkout
       - run: echo "これはtest job"
+  deploy_to_render:
+    machine:
+      image: circleci/classic:latest
+    steps:
+      - checkout
+      - run:
+          name: Deploy to Render.com
+          command: |
+            curl -X POST "https://render.com/api/v1/projects/$RENDER_ACCOUNT_ID/$RENDER_PROJECT_ID/deploy/$RENDER_BRANCH" \
+            -H "Authorization: Bearer $RENDER_API_KEY" \
+            -H "Content-Type: application/json" \
+            --data '{"branch":"'"$CIRCLE_BRANCH"'", "commit_sha":"'"$CIRCLE_SHA1"'"}'
+    when: on_success
 
 # ジョブの実行順の指定
 workflows:
@@ -27,3 +40,7 @@ workflows:
     jobs:
       - build
       - test
+  deploy:
+    jobs:
+      - deploy_to_render:
+          context: render
