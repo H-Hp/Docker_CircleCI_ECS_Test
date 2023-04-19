@@ -5,6 +5,7 @@ Rails.application.configure do
 
   config.hosts << "www.aim-get.com"
   config.hosts << "aim-get.com"
+  config.hosts << "docker-circleci-ecs-test-git.onrender.com"
 
   # Code is not reloaded between requests.
   config.cache_classes = true
