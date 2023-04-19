@@ -32,12 +32,17 @@ pidfile ENV.fetch("PIDFILE") { "tmp/pids/server.pid" }
 #
 # workers ENV.fetch("WEB_CONCURRENCY") { 2 }
 
+#この設定は、Webサーバーによってハンドルされる同時リクエスト数を増やすために使用される
+# 初期値は2だが、Renderの公式ドキュメントに沿って4に変更
+workers ENV.fetch("WEB_CONCURRENCY") { 4 }
+
 # Use the `preload_app!` method when specifying a `workers` number.
 # This directive tells Puma to first boot the application and load code
 # before forking the application. This takes advantage of Copy On Write
 # process behavior so workers use less memory.
 #
-# preload_app!
+#preload_app! オプションは、マスタープロセスでアプリケーションのコードを読み込んでおき、各ワーカープロセスでそのまま再利用するためのもの
+preload_app!
 
 # Allow puma to be restarted by `rails restart` command.
 plugin :tmp_restart

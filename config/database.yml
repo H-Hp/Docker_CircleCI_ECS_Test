@@ -26,4 +26,8 @@ test:
 
 production:
   <<: *default
-  database: sample_production
+  #database: sample_production
+
+  #Render.comのDB
+  url: <%= ENV['DATABASE_URL'] %>
+
