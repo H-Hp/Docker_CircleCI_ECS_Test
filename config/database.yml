@@ -8,7 +8,6 @@ default: &default
   adapter: postgresql
   pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   username: Wondman
-  password: <%= ENV['Postgresql_Wondman_PASSWORD'] %>
   #host: 0.0.0.0
   host: localhost
   timeout: 5000
@@ -24,11 +23,11 @@ test:
   <<: *default
   database: sample_test
 
-production:
+production: &production #&productionってエイリアス作成
   <<: *default
   #database: sample_production
 
 production_render_com: #Render.comのDB設定
   <<: *production
   url: <%= ENV['RENDER_COM_DATABASE_URL'] %>
-
+  password: <%= ENV['RENDER_COM_Postgresql_Wondman_PASSWORD'] %>
