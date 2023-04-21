@@ -28,6 +28,7 @@ production:
   <<: *default
   #database: sample_production
 
-  #Render.comのDB
-  url: <%= ENV['DATABASE_URL'] %>
+production_render_com: #Render.comのDB設定
+  <<: *production
+  url: <%= ENV['RENDER_COM_DATABASE_URL'] %>
 

@@ -1,10 +1,10 @@
-require "active_support/core_ext/integer/time"
+require "active_support/core_ext/integer/time"# ActiveSupportライブラリの拡張機能の中から、時間計算に関する整数の拡張を利用するために、integer/timeファイルを読み込む
 
+#Railsアプリケーションの設定を行うためのブロックを開始
 Rails.application.configure do
  
   config.hosts << "www.aim-get.com"
   config.hosts << "aim-get.com"
-  config.hosts << "docker-circleci-ecs-test-git.onrender.com"
 
   config.cache_classes = false
 

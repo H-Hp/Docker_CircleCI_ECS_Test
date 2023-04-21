@@ -12,9 +12,9 @@ services:
     buildCommand: "./bin/render-build.sh"
     startCommand: "bundle exec puma -C config/puma.rb"
     envVars:
-      - key: <%= ENV['DATABASE_URL'] %>
+      - key: <%= ENV['RENDER_COM_DATABASE_URL'] %>
         fromDatabase:
           name: aim_mini_test_postgresql
           property: connectionString
-      - key: <%= ENV['RAILS_MASTER_KEY'] %>
+      - key: <%= ENV['RENDER_COM_RAILS_MASTER_KEY'] %>
         sync: false
