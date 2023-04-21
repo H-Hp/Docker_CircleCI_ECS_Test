@@ -1,0 +1,38 @@
+#ベースimage:#このイメージはnginxをベースに作成されることを指定
+FROM nginx
+
+#依存関係をインストール・このDockerfileで必要な依存関係をインストールする
+RUN apt-get update -qq && apt-get -y install apache2-utils
+
+#アプリケーションのルートを設定する・Nginxがファイルを探す場所を指定
+#ENV RAILS_ROOTを指定することで$RAILS_ROOTで変数として使える
+#ENV RAILS_ROOT /var/www/app_name
+ENV RAILS_ROOT /aim-mini-test
+
+#イメージの中に作業ディレクトリを設定・コマンドが実行される場所を指定
+#WORKDIR $RAILS_ROOT
+WORKDIR $RAILS_ROOT
+
+#logディレクトリの作成・ログファイルを保存するためにlogディレクトリを作成
+RUN mkdir log
+
+#静的asset(静的ファイルなど)をコピーする
+COPY public public/
+
+#Nginxのconfig設定テンプレートをコピーする
+#COPY docker/web/nginx.conf /tmp/docker.nginx
+COPY ./nginx.conf /tmp/docker.nginx
+
+#substitute variable references in the Nginx config template for real values from the environment
+#Nginxのコンフィグテンプレートの変数参照を、環境からの実際の値に置き換える。
+#環境変数で置換されたNginx構成を生成する
+#最終的な設定をその場所に置きます put the final config in its place
+RUN envsubst '$RAILS_ROOT' < /tmp/docker.nginx > /etc/nginx/conf.d/default.conf
+
+#ポート番号の設定・このコンテナがポート80を使用することをDockerで指定
+EXPOSE 80
+
+# Use the "exec" form of CMD so Nginx shuts down gracefully on SIGTERM (i.e. `docker stop`)
+#CMDの "exec "形式を使用し、NginxがSIGTERMで優雅にシャットダウンするようにします（例：`docker stop`）。
+#コンテナが実行されるときに実行されるコマンドを定義するDockerfileディレクティブです。コンテナが停止するときに、Nginxが正しくシャットダウンするように、 daemon off;が追加されている
+CMD [ "nginx", "-g", "daemon off;" ]

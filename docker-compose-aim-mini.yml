@@ -1,0 +1,59 @@
+#Docker Composeファイルのバージョンを定義
+version: '3'
+#Dockerコンテナの永続化用に、データの格納場所を定義
+volumes:
+  #postgres_dataという名前の空のvolumeを定義
+  postgres_data: {}
+
+#複数のDockerコンテナを定義
+services:
+  #appという名前のサービスを定義
+  app:
+    #Dockerイメージのビルド設定を定義
+    build:
+      #Dockerfileが存在するディレクトリを指定
+      context: .
+      #ビルドに使用するDockerfileを指定
+      dockerfile: ./Dockerfile.aim-app
+
+    #依存関係を定義
+    #depends_onは、コンテナの起動順序を制御するために使用されます。依存関係のあるサービスが起動してから、依存関係のあるサービスが起動されます。例えば、この場合、webサービスはappサービスに依存しているため、appサービスが起動されてからwebサービスが起動されます。同様に、dbサービスはappサービスに依存しているため、appサービスが起動されてからdbサービスが起動されます。
+    depends_on:
+      #dbサービスに依存していることを示す
+      #app起動 → db起動の順番
+      - db
+  #dbという名前のサービスを定義
+  db:
+    #Docker Hubからpostgresイメージをダウンロード
+    image: postgres
+    #Dockerコンテナの永続化用に、データの格納場所を定義
+    volumes:
+      #postgres_dataという名前のvolumeをマウントして、PostgreSQLが使用するデータを永続化している
+      - postgres_data:/var/lib/postgresql/data
+  #webという名前のサービスを定義
+  web:
+    #Dockerイメージのビルド設定を定義
+    build:
+      #Dockerfileが存在するディレクトリを指定
+      context: .
+      #ビルドに使用するDockerfileを指定
+      dockerfile: ./Dockerfile.aim-web
+    #依存関係を定義
+    #webサービスはappサービスに依存しているため、appサービスが起動されてからwebサービスが起動されます
+    depends_on:
+      #appサービスに依存していることを示す
+      #web起動 → app起動の順番
+      - app
+    #Dockerコンテナのポートフォワーディングの設定を定義
+    ports:
+      #ホストのポート3000とコンテナのポート3000をマッピング
+      #- 3000:3000はNginxとRails/pumaのポートマッピングではない
+      #- 3000:3000はDocker Composeによって、Dockerコンテナ内のポート3000を、ホストマシンのポート3000にマッピングするための設定です。Rails/pumaは、Dockerコンテナ内でポート3000をリッスンしており、NginxはDockerコンテナ内のポート80をリッスンしています。Nginxは、HTTPリクエストを受信すると、リバースプロキシとして動作して、リクエストをRails/pumaに転送します。
+      #- 3000:3000
+
+      #EC2が443:80でポートマッピングするからこの設定
+      #Nginxをポート80で動かす場合は、Docker Composeのポートマッピングを- 80:80として設定する必要があります。その場合、Nginxコンテナ内の80番ポートに接続されたリクエストは、Dockerホストの80番ポートに転送されます
+      - 80:80
+
+      #ALBが443でEC2に80にポートマッピングして、ここでDockerの80で受け付けて、Niginxの80につないで、プロキシでRailsの3000に繋ぐ
+      #はい、理解されているとおりです。ALBはHTTPSトラフィックを受け取るために443ポートで待ち受け、HTTPトラフィックはバックエンドのEC2インスタンスに転送するために80ポートにマップします。EC2インスタンス内のDockerコンテナは、80ポートでHTTPリクエストを受け取ります。Nginxは、Dockerコンテナ内で動作しており、80ポートで待ち受け、受信したリクエストをバックエンドのRailsアプリケーションに転送するために、3000ポートに接続します。
