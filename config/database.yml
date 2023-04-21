@@ -26,8 +26,8 @@ test:
 production: &production #&productionってエイリアス作成
   <<: *default
   #database: sample_production
+  url: <%= ENV['RENDER_COM_DATABASE_URL'] %>
+  password: <%= ENV['RENDER_COM_Postgresql_Wondman_PASSWORD'] %>
 
 production_render_com: #Render.comのDB設定
   <<: *production
-  url: <%= ENV['RENDER_COM_DATABASE_URL'] %>
-  password: <%= ENV['RENDER_COM_Postgresql_Wondman_PASSWORD'] %>
