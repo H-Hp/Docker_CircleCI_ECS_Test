@@ -27,5 +27,10 @@ COPY . /aim-mini-test
 # ポート番号の設定
 EXPOSE 3000
 
+# DBを初期化する
+#RUN bundle exec rails db:create && \
+#    bundle exec rails db:migrate
+#RUN bundle exec rails db:migrate
+
 # Railsサーバの起動
 CMD ["bundle", "exec", "puma", "-C", "config/puma.rb"]

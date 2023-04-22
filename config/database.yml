@@ -31,3 +31,11 @@ production_render_com: #Render.comのDB設定
   <<: *production
   url: <%= ENV['RENDER_COM_DATABASE_URL'] %>
   password: <%= ENV['RENDER_COM_Postgresql_Wondman_PASSWORD'] %>
+
+
+production-aim-mini:
+  <<: *production
+  host: db
+  database: <%= Rails.application.credentials.production-aim-mini[:production-aim-mini-db] %>
+  username: <%= Rails.application.credentials.production-aim-mini[:production-aim-mini-db-user-name] %>
+  password: <%= Rails.application.credentials.production-aim-mini[:production-aim-mini-db-password] %>

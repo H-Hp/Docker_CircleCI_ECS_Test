@@ -7,6 +7,23 @@ volumes:
 
 #複数のDockerコンテナを定義
 services:
+
+  #dbという名前のサービスを定義
+  db:
+    #Docker Hubからpostgresイメージをダウンロード
+    image: postgres
+    #ユーザー・パスワード・DBを新規作成(ユーザーなどローカルに存在しなくてもOK)
+    environment:
+      POSTGRES_USER: <%= Rails.application.credentials.production-aim-mini[:production-aim-mini-db-user-name] %>
+      POSTGRES_PASSWORD: <%= Rails.application.credentials.production-aim-mini[:production-aim-mini-db-password] %>
+      POSTGRES_DB: <%= Rails.application.credentials.production-aim-mini[:production-aim-mini-db] %>
+    #Dockerコンテナの永続化用に、データの格納場所を定義
+    volumes:
+      #postgres_dataという名前のvolumeをマウントして、PostgreSQLが使用するデータを永続化している
+      - postgres_data:/var/lib/postgresql/data
+    #command: bundle exec rails db:migrate && bundle exec puma -C config/puma.rb
+
+
   #appという名前のサービスを定義
   app:
     #Dockerイメージのビルド設定を定義
@@ -15,21 +32,19 @@ services:
       context: .
       #ビルドに使用するDockerfileを指定
       dockerfile: ./Dockerfile.aim-app
-
+    environment:
+      RAILS_ENV: production-aim-mini
     #依存関係を定義
     #depends_onは、コンテナの起動順序を制御するために使用されます。依存関係のあるサービスが起動してから、依存関係のあるサービスが起動されます。例えば、この場合、webサービスはappサービスに依存しているため、appサービスが起動されてからwebサービスが起動されます。同様に、dbサービスはappサービスに依存しているため、appサービスが起動されてからdbサービスが起動されます。
     depends_on:
       #dbサービスに依存していることを示す
       #app起動 → db起動の順番
       - db
-  #dbという名前のサービスを定義
-  db:
-    #Docker Hubからpostgresイメージをダウンロード
-    image: postgres
-    #Dockerコンテナの永続化用に、データの格納場所を定義
-    volumes:
-      #postgres_dataという名前のvolumeをマウントして、PostgreSQLが使用するデータを永続化している
-      - postgres_data:/var/lib/postgresql/data
+    #command: bundle exec rails db:migrate && bundle exec rails s -p 3000 -b '0.0.0.0'
+    #command: bundle exec rails db:migrate && bundle exec puma -C config/puma.rb
+
+
+
   #webという名前のサービスを定義
   web:
     #Dockerイメージのビルド設定を定義
