@@ -7,33 +7,22 @@ volumes:
 
 #複数のDockerコンテナを定義
 services:
-
-  #dbという名前のサービスを定義
-  db:
-    #Docker Hubからpostgresイメージをダウンロード
-    image: postgres
-    #ユーザー・パスワード・DBを新規作成(ユーザーなどローカルに存在しなくてもOK)
-    environment:
-      POSTGRES_USER: <%= Rails.application.credentials.production-aim-mini[:production-aim-mini-db-user-name] %>
-      POSTGRES_PASSWORD: <%= Rails.application.credentials.production-aim-mini[:production-aim-mini-db-password] %>
-      POSTGRES_DB: <%= Rails.application.credentials.production-aim-mini[:production-aim-mini-db] %>
-    #Dockerコンテナの永続化用に、データの格納場所を定義
-    volumes:
-      #postgres_dataという名前のvolumeをマウントして、PostgreSQLが使用するデータを永続化している
-      - postgres_data:/var/lib/postgresql/data
-    #command: bundle exec rails db:migrate && bundle exec puma -C config/puma.rb
-
-
   #appという名前のサービスを定義
   app:
+    image: aim-mini-app:v2
     #Dockerイメージのビルド設定を定義
     build:
       #Dockerfileが存在するディレクトリを指定
       context: .
       #ビルドに使用するDockerfileを指定
       dockerfile: ./Dockerfile.aim-app
+      #dockerfile: ./docker/aim-mini/app/Dockerfile
     environment:
       RAILS_ENV: production-aim-mini
+      RACK_ENV: production
+      #secret_key_base: <%= Rails.application.credentials.secret_key_base %>
+      secret_key_base: ENV['SECRET_KEY_BASE']
+      SECRET_KEY_BASE: ENV['SECRET_KEY_BASE']
     #依存関係を定義
     #depends_onは、コンテナの起動順序を制御するために使用されます。依存関係のあるサービスが起動してから、依存関係のあるサービスが起動されます。例えば、この場合、webサービスはappサービスに依存しているため、appサービスが起動されてからwebサービスが起動されます。同様に、dbサービスはappサービスに依存しているため、appサービスが起動されてからdbサービスが起動されます。
     depends_on:
@@ -42,16 +31,50 @@ services:
       - db
     #command: bundle exec rails db:migrate && bundle exec rails s -p 3000 -b '0.0.0.0'
     #command: bundle exec rails db:migrate && bundle exec puma -C config/puma.rb
+    #command: bundle exec rails db:migrate
+    networks:
+      - aim-mini-network
+    command: bundle exec rails db:migrate
+    command: bundle exec puma -C config/puma.rb
 
 
+
+
+  #dbという名前のサービスを定義
+  db:
+    #image: aim-mini-db:v2
+    #Docker Hubからpostgresイメージをダウンロード
+    #image: postgres という設定は、公式のPostgreSQLイメージを使うという意味
+    image: postgres
+    #ユーザー・パスワード・DBを新規作成(ユーザーなどローカルに存在しなくてもOK)
+    environment:
+      #POSTGRES_USER: <%= Rails.application.credentials.production-aim-mini[:production-aim-mini-db-user-name] %>
+      #POSTGRES_PASSWORD: <%= Rails.application.credentials.production-aim-mini[:production-aim-mini-db-password] %>
+      #POSTGRES_DB: <%= Rails.application.credentials.production-aim-mini[:production-aim-mini-db] %>
+      POSTGRES_USER: wondman
+      POSTGRES_PASSWORD: nikoniko777
+      POSTGRES_DB: aim-db
+    #Dockerコンテナの永続化用に、データの格納場所を定義
+    volumes:
+      #postgres_dataという名前のvolumeをマウントして、PostgreSQLが使用するデータを永続化している
+      - postgres_data:/var/lib/postgresql/data
+    #command: bundle exec rails db:migrate && bundle exec puma -C config/puma.rb
+    networks:
+      - aim-mini-network
+    #command: bundle exec rails db:migrate
+
+ 
 
   #webという名前のサービスを定義
   web:
+    #image: <イメージ名>:<タグ>
+    image: aim-mini-web:v2
     #Dockerイメージのビルド設定を定義
     build:
       #Dockerfileが存在するディレクトリを指定
       context: .
       #ビルドに使用するDockerfileを指定
+      #dockerfile: ./Dockerfile.aim-web
       dockerfile: ./Dockerfile.aim-web
     #依存関係を定義
     #webサービスはappサービスに依存しているため、appサービスが起動されてからwebサービスが起動されます
@@ -69,6 +92,11 @@ services:
       #EC2が443:80でポートマッピングするからこの設定
       #Nginxをポート80で動かす場合は、Docker Composeのポートマッピングを- 80:80として設定する必要があります。その場合、Nginxコンテナ内の80番ポートに接続されたリクエストは、Dockerホストの80番ポートに転送されます
       - 80:80
+    networks:
+      - aim-mini-network
 
       #ALBが443でEC2に80にポートマッピングして、ここでDockerの80で受け付けて、Niginxの80につないで、プロキシでRailsの3000に繋ぐ
       #はい、理解されているとおりです。ALBはHTTPSトラフィックを受け取るために443ポートで待ち受け、HTTPトラフィックはバックエンドのEC2インスタンスに転送するために80ポートにマップします。EC2インスタンス内のDockerコンテナは、80ポートでHTTPリクエストを受け取ります。Nginxは、Dockerコンテナ内で動作しており、80ポートで待ち受け、受信したリクエストをバックエンドのRailsアプリケーションに転送するために、3000ポートに接続します。
+networks:
+  aim-mini-network:
+    external: true

@@ -1,13 +1,20 @@
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
-  DB_PASSWORD = 'Passwordの値'
-  DATABASE_URL = 'Internal Database URLの値'
-  RAILS_MASTER_KEY = 'master.keyの値'
+  #DB_PASSWORD = 'Passwordの値'
+  #DATABASE_URL = 'Internal Database URLの値'
+  #RAILS_MASTER_KEY = 'master.keyの値'
 
-  config.hosts << "www.aim-get.com"
-  config.hosts << "aim-get.com"
-  config.hosts << "docker-circleci-ecs-test-git.onrender.com"
+  config.secret_key_base = ENV['SECRET_KEY_BASE']
+  secret_key_base = ENV['SECRET_KEY_BASE']
+  SECRET_KEY_BASE = ENV['SECRET_KEY_BASE']
+  
+  config.hosts.clear #全てのhostを受け入れる
+
+  #config.hosts << "www.aim-get.com"
+  #config.hosts << "aim-get.com"
+  #config.hosts << "docker-circleci-ecs-test-git.onrender.com"
+  #config.hosts << "0.0.0.0"
 
   config.cache_classes = true
   config.eager_load = true
@@ -21,8 +28,8 @@ Rails.application.configure do
 
   config.active_storage.service = :local
 
-  config.force_ssl = true
-  config.ssl_options = { redirect: { exclude: -> request { request.env['HTTP_USER_AGENT'].include?('ELB-HealthChecker') } } }
+  #config.force_ssl = true
+  #config.ssl_options = { redirect: { exclude: -> request { request.env['HTTP_USER_AGENT'].include?('ELB-HealthChecker') } } }
 
   config.log_level = :info
 

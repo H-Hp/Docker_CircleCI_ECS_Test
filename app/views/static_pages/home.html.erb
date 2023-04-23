@@ -1,7 +1,7 @@
 <h1>StaticPages#home</h1>
 <p>Docker Hub v5</p>
 <p>Rails v4/21/16:00</p>
-
-<%= Rails.application.credentials.development[:mu] %>
+aaa
+<%= ENV['SECRET_KEY_BASE'] %>
 
 <%= link_to 'お問い合わせ', new_contact_path %>

@@ -1,7 +1,7 @@
 #キャッシュファイル
 .docker/
 .git/
-tmp/
+# tmp/
 log/
 vendor/
 node_modules/

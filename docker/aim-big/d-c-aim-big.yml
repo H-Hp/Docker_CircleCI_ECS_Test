@@ -7,8 +7,6 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile.aim-app
-    depends_on:
-      - db
   web:
     build:
       context: .
