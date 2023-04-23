@@ -94,3 +94,5 @@ production: &production #エイリアス作成
 
 production-aim-mini:
   <<: *production #productionを継承
+production-aim-big:
+  <<: *production #productionを継承
