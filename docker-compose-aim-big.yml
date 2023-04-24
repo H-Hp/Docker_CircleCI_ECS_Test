@@ -16,9 +16,11 @@ services:
       SECRET_KEY_BASE: <%= Rails.application.credentials.aim_big[:secret_key_base] %>
     #depends_on:
       #- db
+    #volumes:
+      #- ./config/database.yml:/app/config/database.yml # 追加する行
     networks:
       - aim-big-network
-    command: bundle exec rails db:migrate
+    #command: bundle exec rails db:migrate
     command: bundle exec puma -C config/puma.rb
   web:
     image: aim-big-web:v1

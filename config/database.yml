@@ -45,11 +45,15 @@ production-aim-mini:
 
 production-aim-big:
   <<: *production
-  host: <%= Rails.application.credentials.aim_big[:db_host] %>
   port: 5432
-  username: <%= Rails.application.credentials.aim_big[:db_user_name] %>
-  password: <%= Rails.application.credentials.aim_big[:db_password] %>
-  database: <%= Rails.application.credentials.aim_big[:db] %>
+  #host: <%= Rails.application.credentials.aim_big[:db_host] %>
+  #username: <%= Rails.application.credentials.aim_big[:db_user_name] %>
+  #password: <%= Rails.application.credentials.aim_big[:db_password] %>
+  #database: <%= Rails.application.credentials.aim_big[:db] %>
+  host: <%= Rails.application.credentials.dig(:aim_big, :db_host) %>
+  username: <%= Rails.application.credentials.dig(:aim_big, :db_user_name) %>
+  password: <%= Rails.application.credentials.dig(:aim_big, :db_password) %>
+  database: <%= Rails.application.credentials.dig(:aim_big, :db) %>
 
 production_render_com: #Render.comのDB設定
   <<: *production
